@@ -1,10 +1,67 @@
 ﻿@page "/"
 @using LingYunImageHost.Shared
+@using Microsoft.Extensions.Options;
+@using Microsoft.AspNetCore.Components.Forms;
 @attribute [TabItemOption(Text = "Index", Closable = false)]
-<PageTitle>Index</PageTitle>
+@inject IWebHostEnvironment IWebHostEnvironment;
+@implements IDisposable;
+<Card class="col-12">
+    <BodyTemplate>
+        <Stack IsRow="@true" Justify="@StackJustifyContent.Center" AlignItems="@StackAlignItems.Center" IsWrap="@false" IsReverse="@false">
+        <CardUpload IsMultiple="true" TValue="string" ShowProgress="true" OnChange="@OnCardUpload" OnDelete="@(fileName => Task.FromResult(true))"></CardUpload>
+        </Stack>
+    </BodyTemplate>
+</Card>
 
-<h1>Hello, world!</h1>
+@code {
+    private static long MaxFileLength => 200 * 1024 * 1024;
+    private async Task OnCardUpload(UploadFile file)
+    {
+        if (file != null && file.File != null)
+        {
+            System.Console.WriteLine(file);
+            //服务器端验证当文件大于 2MB 时提示文件太大信息
+            if (file.Size > MaxFileLength)
+            {
+                //await ToastService.Information("上传文件", "文件大小超过 200MB");
+                file.Code = 1;
+                file.Error = "文件大小超过 200MB";
+            }
+            else
+            {
+                await SaveToFile(file);
+            }
+        }
+    }
 
-Welcome to your new app.
+    private async Task<bool> SaveToFile(UploadFile file)
+    {
+        // Server Side 使用
+        // Web Assembly 模式下必须使用 webapi 方式去保存文件到服务器或者数据库中
+        // 生成写入文件名称
+        var ret = false; 
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+        //var uploaderFolder = Path.Combine(SiteOptions.CurrentValue.WebRootPath, $"images{Path.DirectorySeparatorChar}uploader");
+        file.FileName = $"{ Path.GetFileNameWithoutExtension(file.OriginFileName)}-{DateTimeOffset.Now:yyyyMMddHHmmss}{Path.GetExtension(file.OriginFileName)}";
+        var fileName = Path.Combine(IWebHostEnvironment.WebRootPath+"/"  + file.FileName);
+        //ReadToken ??= new CancellationTokenSource();
+        ret = await file.SaveToFileAsync(fileName, MaxFileLength);
+
+        if (ret)
+        {
+            // 保存成功
+            file.PrevUrl = file.FileName;
+        }
+        else
+        {
+            var errorMessage = $"{"保存文件失败"} {file.OriginFileName}";
+            file.Code = 1;
+            file.Error = errorMessage;
+            //await ToastService.Error("上传文件", errorMessage);
+        }
+
+        return ret;
+    }
+    public void Dispose() { }
+
+}
