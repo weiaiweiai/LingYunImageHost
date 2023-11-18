@@ -3,15 +3,17 @@ using LingYunImageHost.DB;
 
 using System.Text;
 
+
 internal class Program
 {
     private static void Main(string[] args)
     {
-        //cofnig的DB文件初始化
-        ConfigInitialize();
+
 
         var builder = WebApplication.CreateBuilder(args);
-
+        //cofnig的DB文件初始化
+        ConfigInitialize(builder);
+        builder.Services.AddControllers().AddControllersAsServices();
         // Add services to the container.
         Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
@@ -44,9 +46,11 @@ internal class Program
 
         app.Run();
     }
-    public static void ConfigInitialize() 
+    public static void ConfigInitialize(WebApplicationBuilder builder) 
     {
-        using (DataContext db = new DataContext("Config.db"))
+        var path = ((IWebHostEnvironment)builder.Environment).ContentRootPath;
+
+        using (DataContext db = new DataContext(path + "/Config/"+"Config.db"))
         {
             db.Database.EnsureCreated();
         }

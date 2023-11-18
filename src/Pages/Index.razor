@@ -3,23 +3,68 @@
 @using Microsoft.Extensions.Options;
 @using Microsoft.AspNetCore.Components.Forms;
 @attribute [TabItemOption(Text = "Index", Closable = false)]
-@inject IWebHostEnvironment IWebHostEnvironment;
-@implements IDisposable;
+@inject IWebHostEnvironment IWebHostEnvironment
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
 <Card class="col-12">
+    <!--
+    <HeaderTemplate>
+        请在下方选择上传内容
+    </HeaderTemplate>
+    -->
     <BodyTemplate>
         <Stack IsRow="@true" Justify="@StackJustifyContent.Center" AlignItems="@StackAlignItems.Center" IsWrap="@false" IsReverse="@false">
-        <CardUpload IsMultiple="true" TValue="string" ShowProgress="true" OnChange="@OnCardUpload" OnDelete="@(fileName => Task.FromResult(true))"></CardUpload>
+            <CardUpload Accept="image/*" IsMultiple="true" TValue="string" ShowProgress="true"
+            OnChange="@OnCardUpload" 
+            OnDelete="@(fileName => Task.FromResult(true))"
+            OnDownload="@(file=> Task.FromResult(true))"
+            ShowDownloadButton="@true">
+                <IconTemplate>
+                    <img src="~/images/logo.png" >
+                </IconTemplate>
+        </CardUpload>
         </Stack>
     </BodyTemplate>
 </Card>
+@if (Items !=null) {
+    <Card class="col-12" style="margin-top: 50px;">
+        <BodyTemplate>
+            <Table TItem="PictureInformation" class="col-12" Items="@Items" IsAutoRefresh="@true" AutoRefreshInterval="100">
+                <TableColumns>
+                    <TableColumn @bind-Field="@context.URL">
+                        <Template Context="value">
+                            <img src="@value.Value" class="bb-avatar" />
+                        </Template>
+                        </TableColumn>
+                    <TableColumn @bind-Field="@context.name"/>
+                    <TableColumn @bind-Field="@context.URL2" />
+                </TableColumns>
+            </Table>
+        </BodyTemplate>
+    </Card>
+}
+
 
 @code {
-    private static long MaxFileLength => 200 * 1024 * 1024;
+    public class PictureInformation
+    {
+        [Display(Name = "名称")]
+        public string name { get; set; } = "";
+        [Display(Name = "预览")]
+        public string URL { get; set; } = "";
+        [Display(Name = "地址")]
+        public string URL2 { get; set; } = "";
+    }
+    private List<PictureInformation>? Items { get; set; }
+
+    private static long MaxFileLength => 200 * 1024 *  1024;
     private async Task OnCardUpload(UploadFile file)
     {
+        if (Items == null) { Items = new List<PictureInformation>(); }
         if (file != null && file.File != null)
         {
-            System.Console.WriteLine(file);
+            System.Console.WriteLine(file.OriginFileName);
             //服务器端验证当文件大于 2MB 时提示文件太大信息
             if (file.Size > MaxFileLength)
             {
@@ -31,7 +76,16 @@
             {
                 await SaveToFile(file);
             }
+            Items.Add(new PictureInformation() { 
+                name = file.OriginFileName ,
+                URL = file.FileName,
+                    URL2 = NavigationManager.BaseUri + file.FileName
+
+            });
         }
+        System.Console.WriteLine(NavigationManager.Uri);
+        System.Console.WriteLine(NavigationManager.BaseUri);
+        StateHasChanged();
     }
 
     private async Task<bool> SaveToFile(UploadFile file)
@@ -39,14 +93,10 @@
         // Server Side 使用
         // Web Assembly 模式下必须使用 webapi 方式去保存文件到服务器或者数据库中
         // 生成写入文件名称
-        var ret = false; 
-
-        //var uploaderFolder = Path.Combine(SiteOptions.CurrentValue.WebRootPath, $"images{Path.DirectorySeparatorChar}uploader");
-        file.FileName = $"{ Path.GetFileNameWithoutExtension(file.OriginFileName)}-{DateTimeOffset.Now:yyyyMMddHHmmss}{Path.GetExtension(file.OriginFileName)}";
-        var fileName = Path.Combine(IWebHostEnvironment.WebRootPath+"/"  + file.FileName);
-        //ReadToken ??= new CancellationTokenSource();
+        var ret = false;  
+        file.FileName = $"{DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd")}/{file.OriginFileName}-{DateTimeOffset.Now:yyyyMMddHHmmss}{Path.GetExtension(file.OriginFileName)}";
+        var fileName = Path.Combine(IWebHostEnvironment.WebRootPath+ "/" + file.FileName);
         ret = await file.SaveToFileAsync(fileName, MaxFileLength);
-
         if (ret)
         {
             // 保存成功
@@ -57,9 +107,7 @@
             var errorMessage = $"{"保存文件失败"} {file.OriginFileName}";
             file.Code = 1;
             file.Error = errorMessage;
-            //await ToastService.Error("上传文件", errorMessage);
         }
-
         return ret;
     }
     public void Dispose() { }
