@@ -49,7 +49,10 @@ internal class Program
     public static void ConfigInitialize(WebApplicationBuilder builder) 
     {
         var path = ((IWebHostEnvironment)builder.Environment).ContentRootPath;
-
+        if (!Directory.Exists(path + "/Config/")) 
+        {
+            Directory.CreateDirectory(path + "/Config/");//创建新路径
+        }
         using (DataContext db = new DataContext(path + "/Config/"+"Config.db"))
         {
             db.Database.EnsureCreated();
