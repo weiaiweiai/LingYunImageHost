@@ -1,8 +1,7 @@
-﻿using LingYunImageHost.DB.Entity;
-
+﻿using LingYunImageHost.DB.Sqlite.Entity;
 using Microsoft.EntityFrameworkCore;
 
-namespace LingYunImageHost.DB
+namespace LingYunImageHost.DB.Sqlite
 {
     public class DataContext : DbContext
     {

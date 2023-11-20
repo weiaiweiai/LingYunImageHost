@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace LingYunImageHost.DB.Entity
+namespace LingYunImageHost.DB.Sqlite.Entity
 {
     public class SYS_Config
     {
@@ -23,7 +23,7 @@ namespace LingYunImageHost.DB.Entity
         {
             return "Guid：" + Guid + Environment.NewLine +
                     "Key：" + Key + Environment.NewLine +
-                    "value：" + value + Environment.NewLine+
+                    "value：" + value + Environment.NewLine +
                     "Remark：" + Remark + Environment.NewLine;
         }
     }

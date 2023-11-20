@@ -1,6 +1,5 @@
 ﻿using LingYunImageHost.Data;
-using LingYunImageHost.DB;
-
+using LingYunImageHost.DB.Sqlite;
 using System.Text;
 
 
@@ -53,9 +52,6 @@ internal class Program
         {
             Directory.CreateDirectory(path + "/Config/");//创建新路径
         }
-        using (DataContext db = new DataContext(path + "/Config/"+"Config.db"))
-        {
-            db.Database.EnsureCreated();
-        }
+        ConfigHelpClass.SettingUp(path + "/Config/" + "Config.db");
     }
 }
