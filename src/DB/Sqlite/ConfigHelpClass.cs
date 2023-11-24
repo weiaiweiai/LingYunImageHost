@@ -1,8 +1,12 @@
-﻿using LingYunImageHost.DB.Sqlite.Entity;
+﻿using LingYunImageHost.Config;
+using LingYunImageHost.DB.Sqlite.Entity;
 
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 using System.IO;
+using System.Reflection;
+
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace LingYunImageHost.DB.Sqlite
 {
@@ -30,6 +34,7 @@ namespace LingYunImageHost.DB.Sqlite
         {
             using (DataContext db = new DataContext(Url))
             {
+                config.Guid = Guid.NewGuid().ToString().ToUpper();
                 db.sYS_Config.Add(config);
                 db.SaveChanges();
             }
@@ -40,13 +45,31 @@ namespace LingYunImageHost.DB.Sqlite
             using (DataContext db = new DataContext(Url))
             {
                 List<SYS_Config> Listconfig = db.sYS_Config.Where(e => e.Key == config.Key).ToList();
-                if (Listconfig == null || Listconfig.Count == 0) 
+                if (Listconfig == null || Listconfig.Count == 0)
                 {
                     Add(config);
                 }
-                Listconfig[0].value = config.value;
-                db.SaveChanges();
+                else
+                {
+                    Listconfig[0].value = config.value;
+                    db.SaveChanges();
+                }
             }
         }
+        public static void UploadAll(Config.SysConfig sysConfig)
+        {
+            Type t = sysConfig.GetType();
+            PropertyInfo[] PropertyList = t.GetProperties();
+            foreach (PropertyInfo item in PropertyList)
+            {
+                string name = item.Name;
+                object value = item.GetValue(sysConfig, null);
+                Upload(new SYS_Config {
+                    Key = name,
+                    value = (value??"").ToString()
+                });
+            }
+        }
+
     }
 }

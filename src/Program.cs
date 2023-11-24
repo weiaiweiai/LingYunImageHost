@@ -1,5 +1,8 @@
-﻿using LingYunImageHost.Data;
+﻿using LingYunImageHost.Config;
+using LingYunImageHost.Data;
 using LingYunImageHost.DB.Sqlite;
+using Microsoft.Extensions.FileProviders;
+
 using System.Text;
 
 
@@ -28,6 +31,12 @@ internal class Program
 
         var app = builder.Build();
 
+        app.UseStaticFiles(new StaticFileOptions()
+        {
+            FileProvider = new PhysicalFileProvider(Path.Combine(ConfigEntity.sysConfig.ImageUrl)),
+            RequestPath = "/Image",
+        });
+
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
@@ -53,5 +62,7 @@ internal class Program
             Directory.CreateDirectory(path + "/Config/");//创建新路径
         }
         ConfigHelpClass.SettingUp(path + "/Config/" + "Config.db");
+
+        ConfigEntity.sysConfig.WWWRoot = ((IWebHostEnvironment)builder.Environment).WebRootPath;
     }
 }

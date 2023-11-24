@@ -1,0 +1,71 @@
+﻿@inherits LayoutComponentBase
+
+<Layout SideWidth="0" IsPage="true" ShowGotoTop="true" ShowCollapseBar="true"
+        IsFixedHeader="@false" IsFixedFooter="@false" ShowFooter="@false"
+        IsFullSide="@true" TabDefaultUrl="/" UseTabSet="@false" Menus="@Menus" AdditionalAssemblies="new[] { GetType().Assembly }">
+    <Header>
+         <span class="ms-3 flex-sm-fill d-none d-sm-block "></span>
+        <div class="flex-fill d-sm-none flex-sm-fill">
+        </div>
+        <!--
+            //下面是用户组件，暂时不用
+        <Logout ImageUrl="images/Argo.png" DisplayName="登录" UserName="Admin">
+            <LinkTemplate>
+                <a href="#"><i class="fa-solid fa-suitcase"></i>个人中心</a>
+                <a href="#"><i class="fa-solid fa-cog"></i>设置</a>
+                <a href="#"><i class="fa-solid fa-bell"></i>通知<span class="badge badge-pill badge-success"></span></a>
+                <LogoutLink />
+            </LinkTemplate>
+        </Logout>-->
+    </Header>
+        <Side>
+        <div style="height: 40px;" class="">
+            <ImageViewer style="height: 40px;" class="" @onclick="on" Url="./images/logo.png" FitMode=ObjectFitMode.ScaleDown></ImageViewer>
+        </div>
+    </Side>
+    <Main>
+        <CascadingValue Value="this" IsFixed="true">
+            @Body
+        </CascadingValue>
+    </Main>
+    <Footer>
+        <div class="text-center flex-fill">
+            <a class="page-layout-demo-footer-link" href="https://gitee.com/LongbowEnterprise/BootstrapAdmin" target="_blank">Bootstrap Admin</a>
+        </div>
+    </Footer>
+    <NotFound>
+        <p>Sorry, there's nothing at this address.</p>
+    </NotFound>
+</Layout>
+
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Menus = GetIconSideMenuItems();
+    }
+
+    public void on()
+    {
+        System.Console.WriteLine(222222222222222);
+    }
+    private static List<MenuItem> GetIconSideMenuItems()
+    {
+        var menus = new List<MenuItem>
+        {
+            //new MenuItem() { Text = "返回组件库", Icon = "fa-solid fa-fw fa-home", Url = "https://www.blazor.zone/components" },
+            new MenuItem() { Text = "Index", Icon = "fa-solid fa-fw fa-flag", Url = "/" , Match = NavLinkMatch.All},
+            new MenuItem() { Text = "系统配置", Icon = "fa-solid fa-fw fa-check-square", Url = "/sysconfig" },
+            //new MenuItem() { Text = "FetchData", Icon = "fa-solid fa-fw fa-database", Url = "fetchdata" },
+            //new MenuItem() { Text = "Table", Icon = "fa-solid fa-fw fa-table", Url = "table" },
+            //new MenuItem() { Text = "花名册", Icon = "fa-solid fa-fw fa-users", Url = "users" }
+        };
+
+        return menus;
+    }
+
+    List<MenuItem> Menus;
+
+}

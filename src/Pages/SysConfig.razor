@@ -1,0 +1,101 @@
+﻿@page "/sysconfig"
+@using System.Diagnostics.CodeAnalysis;
+@using LingYunImageHost.Config;
+@using LingYunImageHost.DB.Sqlite;
+@layout UserLayout
+@attribute [TabItemOption(Text = "系统配置")]
+<PageTitle> @Title </PageTitle>
+
+<Card class="col-md-5 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
+    <BodyTemplate>
+        <Card class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
+            <HeaderTemplate>
+                <div> 系统配置 </div>
+            </HeaderTemplate>
+            <BodyTemplate>
+                <ValidateForm DisableAutoSubmitFormByEnter="true" Model="@sysConfig" OnValidSubmit="@OnValidSubmit2" OnInvalidSubmit="@OnInvalidSubmit2">
+                    <div class=" g-3 form-inline">
+                        <div class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
+                            <BootstrapInputGroup>
+                                <BootstrapInputGroupLabel DisplayText="网站名称" />
+                                <BootstrapInput IsDisabled="false" @bind-Value="@sysConfig.WebName"></BootstrapInput>
+                            </BootstrapInputGroup>
+                        </div>
+                        <div class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
+                            <BootstrapInputGroup>
+                                <BootstrapInputGroupLabel DisplayText="上传大小" />
+                                <BootstrapInputNumber IsDisabled="false" @bind-Value="@sysConfig.MaxFileLengthMB"></BootstrapInputNumber>
+                                <BootstrapInputGroupLabel DisplayText="MB" />
+                            </BootstrapInputGroup>
+                        </div>
+
+                        <div class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
+                            <BootstrapInputGroup>
+                                <BootstrapInputGroupLabel DisplayText="图片保存目录(如果为空，则为wwwroot)" />
+                                <BootstrapInput IsDisabled="false" @bind-Value="@sysConfig.ImageUrl"></BootstrapInput>
+                            </BootstrapInputGroup>
+                        </div>
+                    </div>
+                </ValidateForm>
+            </BodyTemplate>
+        </Card>
+
+        <Card class="col-12 col-md-12 col-sm-12" style="margin-top: 32px;margin-bottom: 8px;">
+            <HeaderTemplate>
+                <div> 管理员用户配置 </div>
+            </HeaderTemplate>
+            <BodyTemplate>
+                <ValidateForm DisableAutoSubmitFormByEnter="true" Model="@sysConfig" OnValidSubmit="@OnValidSubmit2" OnInvalidSubmit="@OnInvalidSubmit2">
+                    <div class="g-3 form-inline">
+                        <div class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
+                            <BootstrapInputGroup>
+                                <BootstrapInputGroupLabel DisplayText="用户名" />
+                                <BootstrapInput IsDisabled="false" @bind-Value="@sysConfig.AdminUserName"></BootstrapInput>
+                            </BootstrapInputGroup>
+                        </div>
+                        <div class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
+                            <BootstrapInputGroup>
+                                <BootstrapInputGroupLabel DisplayText="密码" />
+                                <BootstrapPassword IsDisabled="false" @bind-Value="@sysConfig.AdminUserPassword"></BootstrapPassword>
+                            </BootstrapInputGroup>
+                        </div>
+                    </div>
+                </ValidateForm>
+            </BodyTemplate>
+        </Card>
+        <div class="col-12">
+            <Button Icon="fa-solid fa-floppy-disk" Text="保存" OnClickWithoutRender="OnValidator" class="my-3"></Button>
+        </div>
+    </BodyTemplate>
+</Card>
+
+ @code {
+    public Config.SysConfig sysConfig { get; set; } = new Config.SysConfig();
+    string Title = $"{ConfigEntity.sysConfig.WebName}——系统配置";
+    protected override void OnInitialized()
+    {
+        //message = $"Initialized at {DateTime.Now}";
+    }
+    private Task OnValidator()
+    {
+
+        //ValidatorForm.Validate();
+        ConfigHelpClass.UploadAll(sysConfig);
+        return Task.CompletedTask;
+    }
+    private async Task OnValidSubmit2(EditContext context)
+    {
+
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    private Task OnInvalidSubmit2(EditContext context)
+    {
+        return Task.CompletedTask;
+    }
+ }

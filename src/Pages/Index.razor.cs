@@ -36,7 +36,7 @@ namespace LingYunImageHost.Pages
 
         private List<PictureInformation>? Items { get; set; }
 
-        private static long MaxFileLength => SysConfig.MaxFileLengthMB * 1024 * 1024;
+        private static long MaxFileLength => ConfigEntity.sysConfig.MaxFileLengthMB * 1024 * 1024;
          
         private async Task OnCardUpload(UploadFile file)
         {
