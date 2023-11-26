@@ -1,4 +1,10 @@
-﻿using LingYunImageHost.DB.Sqlite;
+﻿using BootstrapBlazor.Components;
+
+using LingYunImageHost.DB.Sqlite;
+
+using System.IO;
+
+using Console = System.Console;
 
 namespace LingYunImageHost.Config
 {
@@ -77,11 +83,15 @@ namespace LingYunImageHost.Config
                         {
                             throw new Exception("未查询到配置文件");
                         }
+                        if (!Directory.Exists(imageUrl))//判断是否存在
+                        {
+                            Directory.CreateDirectory(imageUrl);//创建新路径
+                        }
                     }
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"读取配置出现错误！Message:{e.Message} \r\n错误堆栈：{e.ToString()}");
+                    System.Console.WriteLine($"读取配置出现错误！Message:{e.Message} \r\n错误堆栈：{e.ToString()}");
                     //默认给个5
                     imageUrl = WWWRoot+ "/images";
                 }

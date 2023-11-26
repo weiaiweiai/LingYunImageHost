@@ -1,7 +1,11 @@
-﻿using LingYunImageHost.Config;
+﻿using Blazored.LocalStorage;
+
+using LingYunImageHost.Config;
 using LingYunImageHost.Data;
 using LingYunImageHost.DB.Sqlite;
+
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
 
 using System.Text;
 
@@ -28,9 +32,12 @@ internal class Program
 
         // 增加 Table 数据服务操作类
         builder.Services.AddTableDemoDataService();
+        builder.Services.AddBlazoredLocalStorage();
+
+
 
         var app = builder.Build();
-
+        app.UseAuthorization();
         app.UseStaticFiles(new StaticFileOptions()
         {
             FileProvider = new PhysicalFileProvider(Path.Combine(ConfigEntity.sysConfig.ImageUrl)),

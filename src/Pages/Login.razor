@@ -1,0 +1,73 @@
+﻿@page "/login"
+@layout LoginLayout
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.IdentityModel.Tokens;
+@using System.Security.Claims;
+@using System.IdentityModel.Tokens.Jwt;
+@using System.Text;
+@inject NavigationManager NavigationManager
+@inject IJSRuntime jsRuntime
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-sm-10">
+            <div class="card mt-5">
+                <div class="card-body">
+                    <h5 class="card-title text-center">登录你的账号</h5>
+                    <hr />
+                    <form>
+                        <div class="form-floating mb-3">
+                            <input type="username" class="form-control" id="username" placeholder="name" @bind-value="@username">
+                            <label for="username">用户名</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" placeholder="Password" @bind-value="@password">
+                            <label for="password">密码</label>
+                        </div>
+                        <button type="button" class="btn btn-primary w-100" @onclick="HandleLogin">登录</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .alert {
+        border-radius: 0;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .success-info {
+        background-color: #d7f8e9;
+        border-color: #c6f5e2;
+        color: #1c7248;
+    }
+</style>
+
+@code {
+    private string username;
+    private string password;
+
+    private async Task HandleLogin()
+    {
+
+        //var name = await localStorage.GetItemAsync<string>("name");
+
+        await localStorage.SetItemAsync("JWT", SYS_Tool.GenerateToken(username));
+        await localStorage.SetItemAsync("username", username);
+        //var name = await
+        string JWT = await localStorage.GetItemAsync<string>("JWT");
+        string uname = await localStorage.GetItemAsync<string>("username");
+
+        SYS_Tool.TokenDecrypt(JWT, uname);
+    }
+
+
+
+}

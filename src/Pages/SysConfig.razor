@@ -3,6 +3,7 @@
 @using LingYunImageHost.Config;
 @using LingYunImageHost.DB.Sqlite;
 @layout UserLayout
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 @attribute [TabItemOption(Text = "系统配置")]
 <PageTitle> @Title </PageTitle>
 
@@ -13,7 +14,7 @@
                 <div> 系统配置 </div>
             </HeaderTemplate>
             <BodyTemplate>
-                <ValidateForm DisableAutoSubmitFormByEnter="true" Model="@sysConfig" OnValidSubmit="@OnValidSubmit2" OnInvalidSubmit="@OnInvalidSubmit2">
+                <ValidateForm DisableAutoSubmitFormByEnter="true" Model="@sysConfig"  OnInvalidSubmit="@OnInvalidSubmit2">
                     <div class=" g-3 form-inline">
                         <div class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
                             <BootstrapInputGroup>
@@ -45,7 +46,7 @@
                 <div> 管理员用户配置 </div>
             </HeaderTemplate>
             <BodyTemplate>
-                <ValidateForm DisableAutoSubmitFormByEnter="true" Model="@sysConfig" OnValidSubmit="@OnValidSubmit2" OnInvalidSubmit="@OnInvalidSubmit2">
+                <ValidateForm DisableAutoSubmitFormByEnter="true" Model="@sysConfig" OnInvalidSubmit="@OnInvalidSubmit2">
                     <div class="g-3 form-inline">
                         <div class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
                             <BootstrapInputGroup>
@@ -72,10 +73,7 @@
  @code {
     public Config.SysConfig sysConfig { get; set; } = new Config.SysConfig();
     string Title = $"{ConfigEntity.sysConfig.WebName}——系统配置";
-    protected override void OnInitialized()
-    {
-        //message = $"Initialized at {DateTime.Now}";
-    }
+
     private Task OnValidator()
     {
 
@@ -83,19 +81,15 @@
         ConfigHelpClass.UploadAll(sysConfig);
         return Task.CompletedTask;
     }
-    private async Task OnValidSubmit2(EditContext context)
-    {
-
-    }
-
-
-    protected override async Task OnInitializedAsync()
-    {
-
-    }
 
     private Task OnInvalidSubmit2(EditContext context)
     {
         return Task.CompletedTask;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await localStorage.SetItemAsync("name", "John Smith");
+        var name = await localStorage.GetItemAsync<string>("name");
     }
  }
