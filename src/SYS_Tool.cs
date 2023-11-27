@@ -88,12 +88,11 @@ namespace LingYunImageHost
             }
             catch (SecurityTokenExpiredException ex)
             {
-                Console.WriteLine(ex.Message);
-                //可以在这写续期代码
+                throw;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                throw;
             }
             return result;
         }

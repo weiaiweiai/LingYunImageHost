@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
 
 <Layout SideWidth="0" IsPage="true" ShowGotoTop="true" ShowCollapseBar="true"
         IsFixedHeader="@false" IsFixedFooter="@false" ShowFooter="@false"
@@ -7,21 +9,24 @@
         <!-- <span class="ms-3 flex-sm-fill d-none d-sm-block" @OnClick=@SpanOnclick()>Bootstrap of Blazor</span>-->
         <ImageViewer style="height: 40px;" class="" @onclick="on" Url="./images/logo.png" FitMode=ObjectFitMode.Cover></ImageViewer>
         <!-- <img alt="logo" style="width: 40px;" class="bb-icon ms-3 d-none d-sm-block" src="./images/brand.png">-->
-         <span class="ms-3 flex-sm-fill d-none d-sm-block "></span>
+        <span class="ms-3 flex-sm-fill d-none d-sm-block "></span>
         <div class="flex-fill d-sm-none flex-sm-fill">
         </div>
-
-
-
-                        <Logout ImageUrl="images/Argo.png" DisplayName="管理员" UserName="Admin">
-            <LinkTemplate>
-                <a href="/sysconfig"><i class="fa-solid fa-suitcase"></i>系统管理</a>
-                <a href="#"><i class="fa-solid fa-cog"></i>设置</a>
-                <a href="#"><i class="fa-solid fa-bell"></i>通知<span class="badge badge-pill badge-success"></span></a>
-                <LogoutLink />
-            </LinkTemplate>
-        </Logout>
-
+        @if (IsLogin)
+        {
+            <Logout ImageUrl="images/Argo.png" DisplayName="管理员" UserName="Admin">
+                <LinkTemplate>
+                    <a href="/sysconfig"><i class="fa-solid fa-cog"></i>系统设置</a>
+                    <a href="#"><i class="fa-solid fa-bell"></i>通知<span class="badge badge-pill badge-success"></span></a>
+                    <LogoutLink />
+                </LinkTemplate>
+            </Logout>
+        }
+        else
+        {
+            <Logout ImageUrl="images/Argo.png" @onclick="@Logoutonclick" DisplayName="请登录" UserName="登录">
+            </Logout>
+        }
     </Header>
 
     <Main>
@@ -39,9 +44,31 @@
     </NotFound>
 </Layout>
 
-@code{
+@code {
     public void on()
     {
         System.Console.WriteLine(222222222222222);
+    }
+    public void Logoutonclick()
+    {
+        NavigationManager.NavigateTo("/Login",true);
+    }
+    bool IsLogin = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            string JWT = await localStorage.GetItemAsync<string>("JWT");
+            string uname = await localStorage.GetItemAsync<string>("username");
+            SYS_Tool.TokenDecrypt(JWT, uname);
+            IsLogin = true;
+        }
+        catch
+        {
+            IsLogin = false;
+        }
+        StateHasChanged();
+
     }
 }

@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 <Layout SideWidth="0" IsPage="true" ShowGotoTop="true" ShowCollapseBar="true"
         IsFixedHeader="@false" IsFixedFooter="@false" ShowFooter="@false"
         IsFullSide="@true" TabDefaultUrl="/" UseTabSet="@false" Menus="@Menus" AdditionalAssemblies="new[] { GetType().Assembly }">
@@ -67,5 +67,20 @@
     }
 
     List<MenuItem> Menus;
+    bool IsLogin = false;
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            string JWT = await localStorage.GetItemAsync<string>("JWT");
+            string uname = await localStorage.GetItemAsync<string>("username");
+            SYS_Tool.TokenDecrypt(JWT, uname);
+            IsLogin = true;
+        }
+        catch
+        {
+            IsLogin = false;
+        }
+    }
 }

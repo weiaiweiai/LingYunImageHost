@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
 <Layout SideWidth="0" IsPage="true" ShowGotoTop="true" ShowCollapseBar="true"
         IsFixedHeader="@false" IsFixedFooter="@false" ShowFooter="@false"
         TabDefaultUrl="/" UseTabSet="@false" AdditionalAssemblies="new[] { GetType().Assembly }">
@@ -32,5 +32,21 @@
     public void on()
     {
         System.Console.WriteLine(222222222222222);
+    }
+    bool IsLogin = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        try
+        {
+            string JWT = await localStorage.GetItemAsync<string>("JWT");
+            string uname = await localStorage.GetItemAsync<string>("username");
+            SYS_Tool.TokenDecrypt(JWT, uname);
+            IsLogin = true;
+        }
+        catch
+        {
+            IsLogin = false;
+        }
     }
 }

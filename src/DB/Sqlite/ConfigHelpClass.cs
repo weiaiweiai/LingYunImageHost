@@ -1,10 +1,12 @@
 ﻿using LingYunImageHost.Config;
 using LingYunImageHost.DB.Sqlite.Entity;
+using LingYunImageHost.Pages;
 
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 using System.IO;
 using System.Reflection;
+using System.Xml.Linq;
 
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -39,11 +41,15 @@ namespace LingYunImageHost.DB.Sqlite
                 db.SaveChanges();
             }
         }
-
         public static void Upload(SYS_Config config)
         {
             using (DataContext db = new DataContext(Url))
             {
+                if (config.Key.Equals("AdminUserPassword"))
+                {
+                    if (string.IsNullOrEmpty(config.value)) return;
+                    config.value = SYS_Tool.sha256(config.value);
+                }
                 List<SYS_Config> Listconfig = db.sYS_Config.Where(e => e.Key == config.Key).ToList();
                 if (Listconfig == null || Listconfig.Count == 0)
                 {

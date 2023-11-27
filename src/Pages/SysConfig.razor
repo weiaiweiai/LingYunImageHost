@@ -56,7 +56,7 @@
                         </div>
                         <div class="col-12 col-md-12 col-sm-12" style="margin-top: 8px;margin-bottom: 8px;">
                             <BootstrapInputGroup>
-                                <BootstrapInputGroupLabel DisplayText="密码" />
+                                <BootstrapInputGroupLabel DisplayText="密码(为空则不修改)" />
                                 <BootstrapPassword IsDisabled="false" @bind-Value="@sysConfig.AdminUserPassword"></BootstrapPassword>
                             </BootstrapInputGroup>
                         </div>
@@ -71,7 +71,7 @@
 </Card>
 
  @code {
-    public Config.SysConfig sysConfig { get; set; } = new Config.SysConfig();
+    public Config.SysConfig sysConfig { get; set; } = new Config.SysConfig() { AdminUserPassword = "" };
     string Title = $"{ConfigEntity.sysConfig.WebName}——系统配置";
 
     private Task OnValidator()
