@@ -36,7 +36,7 @@ namespace LingYunImageHost
             }
         }
 
-        public static string TokenDecrypt(string token, string uname)
+        public static string TokenDecrypt(string token, string uname,out bool IsLogin)
         {
             string result = string.Empty;//加密内容
             try
@@ -48,6 +48,7 @@ namespace LingYunImageHost
                 // 根据token是否正常解析
                 if (jwt == null)
                 {
+                    IsLogin = false;
                     return "";
                 }
                 // 验证token是否有效
@@ -85,15 +86,19 @@ namespace LingYunImageHost
                     Claim claim = principal.Claims.First();
                     result = claim.Value;
                 }
+                IsLogin = true;
             }
             catch (SecurityTokenExpiredException ex)
             {
+                IsLogin = false;
                 throw;
             }
             catch (Exception ex)
             {
+                IsLogin = false;
                 throw;
             }
+            //IsLogin = true;
             return result;
         }
 

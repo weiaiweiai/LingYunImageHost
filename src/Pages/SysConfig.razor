@@ -4,6 +4,8 @@
 @using LingYunImageHost.DB.Sqlite;
 @layout UserLayout
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager NavigationManager
+
 @attribute [TabItemOption(Text = "系统配置")]
 <PageTitle> @Title </PageTitle>
 
@@ -71,13 +73,11 @@
 </Card>
 
  @code {
-    public Config.SysConfig sysConfig { get; set; } = new Config.SysConfig() { AdminUserPassword = "" };
+    public Config.SysConfig sysConfig { get; set; } 
     string Title = $"{ConfigEntity.sysConfig.WebName}——系统配置";
 
     private Task OnValidator()
     {
-
-        //ValidatorForm.Validate();
         ConfigHelpClass.UploadAll(sysConfig);
         return Task.CompletedTask;
     }
@@ -87,9 +87,27 @@
         return Task.CompletedTask;
     }
 
+    bool IsLogin = false;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await localStorage.SetItemAsync("name", "John Smith");
-        var name = await localStorage.GetItemAsync<string>("name");
+        try
+        {
+            if (!IsLogin)
+            {
+                string JWT = await localStorage.GetItemAsync<string>("JWT");
+                string uname = await localStorage.GetItemAsync<string>("username");
+                SYS_Tool.TokenDecrypt(JWT, uname, out IsLogin);
+                if (!IsLogin) throw new Exception("鉴权失败");
+                sysConfig = new Config.SysConfig() { AdminUserPassword = "" };
+                //IsLogin = true;
+                StateHasChanged();
+            }
+        }
+        catch
+        {
+            NavigationManager.NavigateTo("/login", true);
+            IsLogin = false;
+        }
     }
  }

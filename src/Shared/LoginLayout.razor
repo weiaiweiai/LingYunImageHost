@@ -33,20 +33,4 @@
     {
         System.Console.WriteLine(222222222222222);
     }
-    bool IsLogin = false;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        try
-        {
-            string JWT = await localStorage.GetItemAsync<string>("JWT");
-            string uname = await localStorage.GetItemAsync<string>("username");
-            SYS_Tool.TokenDecrypt(JWT, uname);
-            IsLogin = true;
-        }
-        catch
-        {
-            IsLogin = false;
-        }
-    }
 }
