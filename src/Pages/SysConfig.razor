@@ -5,7 +5,7 @@
 @layout UserLayout
 @inject Blazored.LocalStorage.ILocalStorageService localStorage
 @inject NavigationManager NavigationManager
-
+@inject SwalService SwalService
 @attribute [TabItemOption(Text = "系统配置")]
 <PageTitle> @Title </PageTitle>
 
@@ -76,10 +76,36 @@
     public Config.SysConfig sysConfig { get; set; } 
     string Title = $"{ConfigEntity.sysConfig.WebName}——系统配置";
 
-    private Task OnValidator()
+    [Inject]
+    [NotNull]
+    private SwalService? swalService { get; set; }
+
+    private async Task OnValidator()
     {
-        ConfigHelpClass.UploadAll(sysConfig);
-        return Task.CompletedTask;
+        try 
+        {
+            ConfigHelpClass.UploadAll(sysConfig);
+            var op = new SwalOption()
+            {
+                Category = SwalCategory.Success,
+                Title = "保存成功",
+                Content = "保存成功",
+                ShowClose = true
+            };
+            await swalService.Show(op);
+        }
+        catch (Exception ex)
+        {
+            var op = new SwalOption()
+                {
+                    Category = SwalCategory.Error,
+                    Title = "保存失败！",
+                    Content = ex.Message,
+                    ShowClose = true
+                };
+            await swalService.Show(op);
+        }
+        return;
     }
 
     private Task OnInvalidSubmit2(EditContext context)

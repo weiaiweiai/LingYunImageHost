@@ -53,15 +53,18 @@ namespace LingYunImageHost.Pages
                 {
                     //await ToastService.Information("上传文件", "文件大小超过 200MB");
                     file.Code = 1;
-                    file.Error = "文件大小超过 200MB";
+                    file.Error = "文件大小超过";
                 }
                 else
                 {
                     await SaveToFile(file);
                 }
 
-                Items.Add(new PictureInformation()
-                {name = file.OriginFileName, URL = file.FileName, URL2 = NavigationManager.BaseUri + file.FileName});
+                Items.Add(new PictureInformation(){
+                    name = file.OriginFileName,
+                    URL = file.PrevUrl,
+                    URL2 = NavigationManager.BaseUri + file.PrevUrl
+                });
             }
 
             System.Console.WriteLine(NavigationManager.Uri);
@@ -76,12 +79,12 @@ namespace LingYunImageHost.Pages
             // 生成写入文件名称
             var ret = false;
             file.FileName = $"{DateTime.UtcNow.AddHours(8).ToString("yyyy-MM-dd")}/{file.OriginFileName}-{DateTimeOffset.Now:yyyyMMddHHmmss}{Path.GetExtension(file.OriginFileName)}";
-            var fileName = Path.Combine(IWebHostEnvironment.WebRootPath + "/" + file.FileName);
+            var fileName = Path.Combine(ConfigEntity.sysConfig.ImageUrl + "/" + file.FileName);
             ret = await file.SaveToFileAsync(fileName, MaxFileLength);
             if (ret)
             {
                 // 保存成功
-                file.PrevUrl = file.FileName;
+                file.PrevUrl = "Image/" + file.FileName;
             }
             else
             {

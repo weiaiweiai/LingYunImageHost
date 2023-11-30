@@ -150,8 +150,8 @@ namespace LingYunImageHost.Config
                 catch (Exception e)
                 {
                     Console.WriteLine($"读取配置出现错误！Message:{e.Message} \r\n错误堆栈：{e.ToString()}");
-                    //默认给个5
-                    adminUserPassword = "admin123@";
+                    //默认admin123@
+                    adminUserPassword = SYS_Tool.sha256("admin123@");
                 }
                 return adminUserPassword;
             }
