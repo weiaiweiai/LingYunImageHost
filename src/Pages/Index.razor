@@ -7,8 +7,9 @@
 @inject IWebHostEnvironment IWebHostEnvironment
 @inject NavigationManager NavigationManager
 @implements IDisposable
-
-<Card class="col-12">
+@using AntDesign
+@using BootstrapBlazor.Components;
+<BootstrapBlazor.Components.Card class="col-12">
     <!--
     <HeaderTemplate>
         请在下方选择上传内容
@@ -16,6 +17,7 @@
     -->
     <BodyTemplate>
         <Stack IsRow="@true" Justify="@StackJustifyContent.Center" AlignItems="@StackAlignItems.Center" IsWrap="@false" IsReverse="@false">
+             
             <CardUpload Accept="image/*" IsMultiple="true" TValue="string" ShowProgress="true"
             OnChange="@OnCardUpload" 
             OnDelete="@(fileName => Task.FromResult(true))"
@@ -25,13 +27,30 @@
                     <img src="~/images/logo.png" >
                 </IconTemplate>
         </CardUpload>
+        
+        <!--
+            <Upload Action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                    Name="files"
+                    Drag
+                    Multiple
+                    OnSingleCompleted="OnSingleCompleted">
+                <p class="ant-upload-drag-icon">
+                    <Icon Type="inbox" />
+                </p>
+                <p class="ant-upload-text">Click or drag file to this area to upload</p>
+                <p class="ant-upload-hint">
+                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
+                    band files
+                </p>
+            </Upload>
+            -->
         </Stack>
     </BodyTemplate>
-</Card>
+</BootstrapBlazor.Components.Card>
 @if (Items !=null) {
-    <Card class="col-12" style="margin-top: 50px;">
+    <BootstrapBlazor.Components.Card class="col-12" style="margin-top: 50px;">
         <BodyTemplate>
-            <Table TItem="PictureInformation" class="col-12" Items="@Items" IsAutoRefresh="@true" AutoRefreshInterval="100">
+            <BootstrapBlazor.Components.Table TItem="PictureInformation" class="col-12" Items="@Items" IsAutoRefresh="@true" AutoRefreshInterval="100">
                 <TableColumns>
                     <TableColumn @bind-Field="@context.URL">
                         <Template Context="value">
@@ -40,10 +59,33 @@
                         </TableColumn>
                     <TableColumn @bind-Field="@context.name"/>
                     <TableColumn @bind-Field="@context.URL2" />
-                </TableColumns>
-            </Table>
+                </TableColumns> 
+            </BootstrapBlazor.Components.Table>
         </BodyTemplate>
-    </Card>
+    </BootstrapBlazor.Components.Card>
+}
+
+@code {
+
+    void OnSingleCompleted(UploadInfo fileinfo)
+    {
+        if (fileinfo.File.State == UploadState.Success)
+        {
+            var result = fileinfo.File.GetResponse<ResponseModel>();
+            fileinfo.File.Url = result.url;
+        }
+    }
+
+    public class ResponseModel
+    {
+        public string name { get; set; }
+
+        public string status { get; set; }
+
+        public string url { get; set; }
+
+        public string thumbUrl { get; set; }
+    }
 }
 
 

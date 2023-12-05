@@ -29,7 +29,7 @@ internal class Program
         builder.Services.AddBootstrapBlazor();
 
         builder.Services.AddSingleton<WeatherForecastService>();
-
+        builder.Services.AddAntDesign();
         // 增加 Table 数据服务操作类
         builder.Services.AddTableDemoDataService();
         builder.Services.AddBlazoredLocalStorage();
