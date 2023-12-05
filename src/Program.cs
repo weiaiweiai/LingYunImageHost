@@ -54,11 +54,10 @@ internal class Program
         }
 
         app.UseStaticFiles();
-
+        app.MapControllers();                 //增加对WebApi支持
         app.UseRouting();
         app.MapBlazorHub();
         app.MapFallbackToPage("/_Host");
-
         app.Run();
     }
     public static void ConfigInitialize(WebApplicationBuilder builder) 

@@ -17,7 +17,7 @@
     -->
     <BodyTemplate>
         <Stack IsRow="@true" Justify="@StackJustifyContent.Center" AlignItems="@StackAlignItems.Center" IsWrap="@false" IsReverse="@false">
-             
+            <!--
             <CardUpload Accept="image/*" IsMultiple="true" TValue="string" ShowProgress="true"
             OnChange="@OnCardUpload" 
             OnDelete="@(fileName => Task.FromResult(true))"
@@ -27,9 +27,9 @@
                     <img src="~/images/logo.png" >
                 </IconTemplate>
         </CardUpload>
+            -->
         
-        <!--
-            <Upload Action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            <Upload Action="/api/file/upload"
                     Name="files"
                     Drag
                     Multiple
@@ -43,7 +43,7 @@
                     band files
                 </p>
             </Upload>
-            -->
+            
         </Stack>
     </BodyTemplate>
 </BootstrapBlazor.Components.Card>
