@@ -21,6 +21,8 @@ namespace LingYunImageHost
         }
 
         [HttpPost, Route("upload")]
+        [RequestFormLimits(MultipartBodyLengthLimit = long.MaxValue)]
+        [RequestSizeLimit(long.MaxValue)]
         public ResultModel UploadFile([FromForm] IFormCollection formCollection)
         {
             ResultModel result = new ResultModel();
@@ -30,7 +32,7 @@ namespace LingYunImageHost
 
             try
             {
-                string uploadPath = System.IO.Path.Combine("I:\\", "upload");
+                string uploadPath = System.IO.Path.Combine("C:\\", "upload");
                 if (!Directory.Exists(uploadPath))//判断是否存在
                 {
                     Directory.CreateDirectory(uploadPath);//创建新路径
@@ -65,31 +67,6 @@ namespace LingYunImageHost
             }
             return result;
         }
-
-        ///// <summary>
-        ///// 下载文件
-        ///// </summary>
-        //[HttpGet, Route("download")]
-        //[ProducesResponseType(typeof(FileResult), (int)HttpStatusCode.OK)]
-        //public FileResult Download(string Name)
-        //{
-        //    try
-        //    {
-        //        string filePath = System.IO.Path.Combine("I:\\", "upload", Name);
-        //
-        //        //string filePath = System.IO.Path.Combine(this.env.ContentRootPath, "upload");
-        //        Stream stream = new System.IO.FileStream(filePath, FileMode.Open, FileAccess.Read);
-        //        FileStreamResult actionresult = new FileStreamResult(stream, new Microsoft.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream"));
-        //        actionresult.FileDownloadName = Wongoing.Common.Global.BackupFileName;
-        //        return actionresult;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        //Wongoing.Log.LoggingService<FilesController>.Instance.Error($"文件下载失败：{ex.Message}", ex);
-        //        return null;
-        //    }
-        //}
-        //
     }
 
     public class ResultModel
