@@ -23,12 +23,24 @@ internal class Program
         builder.Services.AddBootstrapBlazor();
 
         builder.Services.AddSingleton<WeatherForecastService>();
-
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(
+                name: "myCors",
+                builde =>
+                {
+                    builde.WithOrigins("*", "*", "*")
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                }
+            );
+        });
         // 增加 Table 数据服务操作类
         builder.Services.AddTableDemoDataService();
 
         var app = builder.Build();
-
+        app.UseCors("myCors");
         if (app.Environment.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
