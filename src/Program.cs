@@ -1,9 +1,12 @@
-﻿using Blazored.LocalStorage;
+﻿using AntDesign;
+
+using Blazored.LocalStorage;
 
 using LingYunImageHost.Config;
 using LingYunImageHost.Data;
 using LingYunImageHost.DB.Sqlite;
 
+using Microsoft.AspNetCore.Cors;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 
@@ -34,9 +37,22 @@ internal class Program
         builder.Services.AddTableDemoDataService();
         builder.Services.AddBlazoredLocalStorage();
 
-
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(
+                name: "myCors",
+                builde =>
+                {
+                    builde.WithOrigins("*", "*", "*")
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                }
+            );
+        });
 
         var app = builder.Build();
+        app.UseCors("myCors");
         app.UseAuthorization();
         app.UseStaticFiles(new StaticFileOptions()
         {

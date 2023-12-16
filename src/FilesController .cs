@@ -6,6 +6,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using LingYunImageHost.Config;
 
 namespace LingYunImageHost
 {
@@ -21,8 +22,8 @@ namespace LingYunImageHost
         }
 
         [HttpPost, Route("upload")]
-        [RequestFormLimits(MultipartBodyLengthLimit = long.MaxValue)]
-        [RequestSizeLimit(long.MaxValue)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 2147483648)]
+        [RequestSizeLimit(2147483648)]
         public ResultModel UploadFile([FromForm] IFormCollection formCollection)
         {
             ResultModel result = new ResultModel();
@@ -32,7 +33,8 @@ namespace LingYunImageHost
 
             try
             {
-                string uploadPath = System.IO.Path.Combine("C:\\", "upload");
+                string date = DateTime.Now.ToString("yy-MM-dd");
+                string uploadPath = Path.Combine(ConfigEntity.sysConfig.ImageUrl+ "/" + date);
                 if (!Directory.Exists(uploadPath))//判断是否存在
                 {
                     Directory.CreateDirectory(uploadPath);//创建新路径
@@ -43,17 +45,17 @@ namespace LingYunImageHost
                 {
                     var fileName = file.FileName;
                     string fileExtension = file.FileName.Substring(file.FileName.LastIndexOf(".") + 1);//获取文件名称后缀 
-                    var stream = file.OpenReadStream();
-                    // 把 Stream 转换成 byte[] 
+                    Stream stream = file.OpenReadStream();
                     byte[] bytes = new byte[stream.Length];
-                    using (FileStream fs = new FileStream(uploadPath + "\\" + file.FileName, FileMode.Create))
+                    using (FileStream fs = new FileStream(uploadPath + "/" + file.FileName, FileMode.Create))
                     {
                         using (BinaryWriter bw = new BinaryWriter(fs))
                         {
                             stream.Read(bytes, 0, bytes.Length);
                             // 设置当前流的位置为流的开始 
                             stream.Seek(0, SeekOrigin.Begin);
-                            result.Url += Path.GetFileName("/api/file/?Name=" + file.FileName);
+                            stream.CopyTo(fs);
+                            result.Url = $"Image/{date}/{file.FileName}";
                         }
                     }
                 }
@@ -62,7 +64,6 @@ namespace LingYunImageHost
             {
                 result.Code = 100;
                 result.Message = $"文件上传失败：{ex.Message}!";
-                //Wongoing.Log.LoggingService<FilesController>.Instance.Error($"文件上传失败：{ex.Message}", ex);
                 throw ex;
             }
             return result;

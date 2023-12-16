@@ -9,27 +9,10 @@
 @implements IDisposable
 @using AntDesign
 @using BootstrapBlazor.Components;
-<BootstrapBlazor.Components.Card class="col-12">
-    <!--
-    <HeaderTemplate>
-        请在下方选择上传内容
-    </HeaderTemplate>
-    -->
-    <BodyTemplate>
-        <Stack IsRow="@true" Justify="@StackJustifyContent.Center" AlignItems="@StackAlignItems.Center" IsWrap="@false" IsReverse="@false">
-            <!--
-            <CardUpload Accept="image/*" IsMultiple="true" TValue="string" ShowProgress="true"
-            OnChange="@OnCardUpload" 
-            OnDelete="@(fileName => Task.FromResult(true))"
-            OnDownload="@(file=> Task.FromResult(true))"
-            ShowDownloadButton="@true">
-                <IconTemplate>
-                    <img src="~/images/logo.png" >
-                </IconTemplate>
-        </CardUpload>
-            -->
-        
-            <Upload Action="/api/file/upload"
+
+<GridRow>
+    <GridCol Span="22" Offset="1">
+        <Upload ShowUploadList = "@false" Action="/api/file/upload"
                     Name="files"
                     Drag
                     Multiple
@@ -37,16 +20,15 @@
                 <p class="ant-upload-drag-icon">
                     <Icon Type="inbox" />
                 </p>
-                <p class="ant-upload-text">Click or drag file to this area to upload</p>
+            <p class="ant-upload-text">
+                单击或拖动文件到此区域进行上传
+            </p>
                 <p class="ant-upload-hint">
-                    Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                    band files
+                    支持单个或批量上传。
                 </p>
-            </Upload>
-            
-        </Stack>
-    </BodyTemplate>
-</BootstrapBlazor.Components.Card>
+        </Upload>
+    </GridCol>
+</GridRow>
 @if (Items !=null) {
     <BootstrapBlazor.Components.Card class="col-12" style="margin-top: 50px;">
         <BodyTemplate>
@@ -63,9 +45,6 @@
             </BootstrapBlazor.Components.Table>
         </BodyTemplate>
     </BootstrapBlazor.Components.Card>
-}
-
-@code {
 }
 
 

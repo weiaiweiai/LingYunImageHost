@@ -115,5 +115,26 @@ namespace LingYunImageHost
 
             return builder.ToString();
         }
+        private static readonly string[] suffixes = new string[] { " B", " KB", " MB", " GB", " TB", " PB" };
+        /// <summary>
+        /// 获取文件大小的显示字符串
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public static string BytesToReadableValue(long number)
+        {
+            double last = 1;
+            for (int i = 0; i < suffixes.Length; i++)
+            {
+                var current = Math.Pow(1024, i + 1);
+                var temp = number / current;
+                if (temp < 1)
+                {
+                    return (number / last).ToString("n2") + suffixes[i];
+                }
+                last = current;
+            }
+            return number.ToString();
+        }
     }
 }
