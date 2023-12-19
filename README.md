@@ -1,3 +1,5 @@
+![](https://repobeats.axiom.co/api/embed/accbb9e206be5816e3c747ed8ceb29bfa44543fe.svg)
+
 # LingYunImageHost
 
 这是一个图床程序，是使用C# 开发的
